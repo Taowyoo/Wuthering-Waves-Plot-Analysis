@@ -1,0 +1,29 @@
+{
+  "name": "wuthering-waves-plot-analysis",
+  "production_branch": "master",
+  "build_config": {
+    "build_command": "npm ci --omit=optional && npm run build:cloudflare",
+    "destination_dir": "dist",
+    "root_dir": ""
+  },
+  "source": {
+    "type": "github",
+    "config": {
+      "owner": "Taowyoo",
+      "owner_id": "20309719",
+      "repo_name": "Wuthering-Waves-Plot-Analysis",
+      "repo_id": "1399482058",
+      "production_branch": "master",
+      "production_deployments_enabled": true,
+      "deployments_enabled": true,
+      "preview_deployment_setting": "custom",
+      "preview_branch_includes": ["codex/complete-tasks-in-handoff.md"],
+      "preview_branch_excludes": [],
+      "pr_comments_enabled": false
+    }
+  },
+  "deployment_configs": {
+    "production": { "env_vars": { "NODE_VERSION": { "type": "plain_text", "value": "22" } } },
+    "preview": { "env_vars": { "NODE_VERSION": { "type": "plain_text", "value": "22" } } }
+  }
+}

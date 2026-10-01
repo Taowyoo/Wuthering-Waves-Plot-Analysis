@@ -41,8 +41,31 @@
 - 本次不使用玩家评论、泄露资料或纯攻略推测作为剧情事实。
 - 后续优先补奇谭、危行和锁暝故事，再补活动、NPC、场景文献、声骸与对白分支。更新须同时修订报告、索引和覆盖表。
 
+## 网站构建与发布
+
+本仓库同时提供由三份 Markdown 原稿生成的静态网站。需要 Node.js 22；首次使用先执行 `npm ci --omit=optional`，然后：
+
+```bash
+npm run build    # 生成 dist/
+npm run check    # 检查链接/资源、208 个显式锚点、全文检索覆盖及结果定位
+npm test         # 预览服务器的 HTTP 回归测试
+npm run preview  # 在 http://127.0.0.1:4173/ 本地预览
+```
+
+浏览器回归测试首次运行前执行 `npx playwright install chromium`，随后运行 `npm run test:browser`。测试会自动启动两个本地服务器，分别验证根路径和 `/Wuthering-Waves-Plot-Analysis/` 前缀。已有 Chrome 的环境可设置 `PLAYWRIGHT_CHROME_PATH` 为 Chrome 可执行文件的完整路径，省去 Chromium 下载。CI 使用 Node.js 22，自动安装 Chromium 并运行相同测试，失败时上传截图和 trace。
+
+搜索支持中文子串及不区分大小写的资料编号，按完整章节检索并显示命中附近的摘要。移动端表格和关系图支持横向滚动，可用 Tab 聚焦后按方向键操作；搜索可用 `/` 打开、Escape 关闭。关闭 JavaScript 时正文与导航仍可阅读，关系图保留源代码。
+
+页面全部使用相对链接，可由任意静态文件服务器在域名根目录或子路径提供。将 `dist/` 内容上传到所选托管服务即可；仓库没有默认部署平台。推送和 PR 仅运行通用构建与测试，生成 `static-site` artifact，不执行发布。
+
+## 可选：Cloudflare Pages integration
+
+[Cloudflare Pages 配置与启用指南](https://github.com/Taowyoo/Wuthering-Waves-Plot-Analysis/blob/master/cloudflare/README.md) 提供一种可选托管方案。只有主动选择此方案后，才需安装可选 CLI（`npm ci --include=optional`）、授权 GitHub App 并创建 Pages 项目。通用构建、预览和测试不需要 Cloudflare 账户或 CLI。
+
+`npm run build:cloudflare` 准备 Pages 输出；`npm run cloudflare:setup` 默认只预检创建请求，加 `--apply` 才创建项目。Cloudflare 验证工作流仅支持手动运行，不在每次推送或 PR 中启用；项目创建后，已授权的 Pages Git integration 才会按其分支配置自动发布。其他托管服务可直接使用通用 `npm run build` 的产物。
+
 ## 本次校验
 
-三个 Markdown 文件的本地文件链接与索引锚点均已检查；208 个锚点没有重名或失效引用，表格列数一致。人物关系图已作结构与关系审读，尚未在独立 Mermaid 渲染器中验证显示。外部页面后续可能更新；本地检查不等于实机剧情核验。
+三个 Markdown 文件的本地文件链接与索引锚点均已检查；208 个锚点没有重名或失效引用，表格列数一致。网站的 Mermaid 关系图已在 Chrome 中验证渲染，根路径与项目前缀下的搜索、键盘操作、移动端、深色模式及无 JavaScript 阅读均有浏览器回归覆盖。外部页面后续可能更新；网站测试不等于实机剧情核验。
 
 奇谭公开录像已经定位，但本次播放器显示媒体无法播放；另一任务合集有试看限制，未取得可回放的全文证据。所有录像时间戳仍标“未核验”。
