@@ -1,115 +1,61 @@
-# Portable handoff for the GitHub Pages website
+# Portable handoff for the static research website
 
-**Save `HANDOFF.md` in the repository root as the first step in execution mode.** No file has been saved in this turn because the session remains in Plan mode. The handoff must contain the following context so another AI can continue without this conversation.
+## Current objective and repository
 
-## 1. Verified repository state
+Repository: [Taowyoo/Wuthering-Waves-Plot-Analysis](https://github.com/Taowyoo/Wuthering-Waves-Plot-Analysis). Continuation target: [PR #1](https://github.com/Taowyoo/Wuthering-Waves-Plot-Analysis/pull/1), branch `codex/complete-tasks-in-handoff.md`.
 
-- Repository: [Taowyoo/Wuthering-Waves-Plot-Analysis](https://github.com/Taowyoo/Wuthering-Waves-Plot-Analysis/tree/master).
-- Local workspace: `C:\Users\caoyx\OneDrive\Documents\ChatGPT\鸣潮剧情分析`.
-- Branch: `master`; last inspected commit: `52d101d` — `add initial data of 3.7 lore`. Working tree was clean.
-- Tracked files: `README.md`, `玄方剧情考据报告.md`, `资料索引.md`.
-- No existing website, package configuration, or deployment workflow.
-- Local runtime: Node `22.22.3`, npm `11.9.0`.
-- GitHub network requests from the shell were blocked; `gh auth status` also reported invalid credentials. Remote synchronization and existing Pages settings remain unverified. Recheck them in the next environment.
+The user's latest hosting decision supersedes earlier deployment plans: the site is a **provider-neutral static website** with no default publisher. Cloudflare Pages Git integration is one optional hosting path. Additional lore collection is outside this website conversion.
 
-The active task is to turn the existing research into a website and support GitHub Pages. Additional lore collection is outside this website conversion.
+## Research content that must survive
 
-## 2. Content that must survive conversion
+The three Chinese Markdown documents remain the editorial source of truth: `README.md`, `玄方剧情考据报告.md`, and `资料索引.md`. Preserve the full-spoiler notice, research date, incomplete coverage, source links, and distinctions between facts, character claims, inference, and unresolved questions.
 
-The three Chinese Markdown documents remain the editorial source of truth. Preserve the full-spoiler notice, research date, incomplete coverage, source links, and distinctions between facts, character claims, inference, and unresolved questions.
+- Preserve all 208 explicit anchors, including uppercase source identifiers such as `S35A`.
+- Rewrite actual Markdown document links into website routes while preserving fragments and leaving code examples untouched.
+- Render the report's Mermaid relationship diagram with readable source fallback.
+- Support long Chinese text, wide tables, Unicode filenames and mobile reading.
+- Citation notation `S35A·E05` means source S35A and evidence locator E05 assigned by this research library, not an official paragraph number.
+- The verified S35A E05 entry concerns 木禺与秧秧从铃坊至悬天构前的对话：木禺假扮天工、引导实验，秧秧成为重要目标。
+- 《璇心如月寄尘情》 is recorded as already released but awaiting collection. Do not describe uncollected content as unreleased.
 
-Important rendering requirements:
+## Implementation and generic commands
 
-- Preserve all **208 existing explicit anchors**, including uppercase identifiers such as `S35A`.
-- Rewrite Markdown file links into website routes while preserving fragments.
-- Render the report’s Mermaid relationship diagram.
-- Support long Chinese text, wide tables, Unicode filenames, and mobile reading.
-- Explain citation notation: `S35A·E05` means source `S35A`, evidence locator `E05`, assigned by this research library. It is not an official paragraph number.
-- The verified `S35A·E05` entry concerns 木禺与秧秧从铃坊至悬天构前的对话：木禺假扮天工、引导实验，秧秧成为重要目标。
+Node.js 22 or later builds `/`, `/report/`, and `/sources/` with markdown-it, vanilla CSS/JavaScript and locally bundled Mermaid chunks. Relative URLs support both root hosting and a deployment subpath.
 
-Do not describe uncollected content as unreleased. In particular, 《璇心如月寄尘情》 is recorded as already released but awaiting collection.
+```bash
+npm ci --omit=optional
+npm run build
+npm run check
+npm test
+npm run preview
+```
 
-## 3. Website implementation defaults
+Browser verification: install Chromium with `npx playwright install chromium`, then run `npm run test:browser`. Alternatively set `PLAYWRIGHT_CHROME_PATH` to an existing Chrome executable. The tests start root and subpath preview servers automatically. Local verification used Node.js 24.21.0; CI uses Node.js 22.
 
-These are proposed defaults for the next implementer, not completed work:
+Search covers complete visible inline section text, supports Chinese substring/source-ID queries, shows excerpts around matches, handles slow/failing requests and retries, and restores focus after Escape. Parsed tokens provide common heading IDs for HTML, contents and search destinations. Mobile navigation works without JavaScript. Tables and natural-size Mermaid diagrams are keyboard-scrollable. Dark mode, reduced motion, print styles and diagram failure fallback are supported.
 
-- Build static HTML with Node and [markdown-it](https://github.com/markdown-it/markdown-it); use vanilla CSS/JavaScript and locally bundled dependencies.
-- Provide three routes: `/` for the overview, `/report/` for the analysis, and `/sources/` for the evidence index.
-- Use Chinese navigation, restrained research-library styling, readable typography, desktop contents navigation, and mobile menus.
-- Add browser-side search supporting Chinese substring queries and source identifiers. Generate searchable records from the Markdown during the build.
-- Bundle [Mermaid](https://mermaid.js.org/config/usage.html) locally; preserve a readable diagram-source fallback. Article text and navigation must work without JavaScript.
-- Expose `npm run build`, `npm run check`, and `npm run preview`; commit the dependency lockfile and ignore generated output.
-- Support both a root deployment and the project prefix `/Wuthering-Waves-Plot-Analysis/`.
+Preview binds to loopback and handles directory redirects, malformed URLs, traversal, HEAD, missing files and unsupported methods. `PORT` and `PREVIEW_BASE_PATH` control local deployment-subpath testing.
 
-Expected default Pages address, **not verified live**:  
-[https://taowyoo.github.io/Wuthering-Waves-Plot-Analysis/](https://taowyoo.github.io/Wuthering-Waves-Plot-Analysis/)
+## Validation and artifacts
 
-## 4. Continuation and acceptance
+`.github/workflows/validate.yml` builds and checks PRs and master pushes, runs HTTP/browser regression tests, uploads a generic `static-site` artifact, and preserves failure screenshots/traces. It has only read access to repository contents and performs no deployment.
 
-1. Save the handoff, marking inspected facts, proposed decisions, completed work, and outstanding blockers separately.
-2. Inspect current files and Git status again; preserve any newer user changes.
-3. Implement the website and document local build and publishing commands.
-4. Add a [GitHub Pages Actions workflow](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages): validate pull requests, deploy pushes to `master`, and allow manual runs.
-5. Check all generated internal links and anchor targets; verify citations, Chinese search, empty results, Mermaid rendering, keyboard navigation, mobile tables, and deployment-prefix handling.
-6. Update the handoff with actual results and exact remaining steps. Commit and push it when authenticated access is available so cloud agents can retrieve it.
+The latest local checks cover three generated pages, all 208 explicit anchors on their respective pages, internal links/assets/fragments, all search destinations and complete inline-text coverage. Three HTTP regression cases and 18 Chrome browser scenarios have passed in prior continuations; repeat relevant checks after changes. Desktop and mobile screenshots were inspected locally. Temporary screenshots are not tracked source files. Website testing does not establish real-game lore accuracy.
 
-Success means the three documents are independently readable as HTML, evidence links remain navigable, local builds reproduce the site, and deployment is either verified or accompanied by a precise unresolved setup step. Never claim that files were saved, changes were pushed, or Pages was published without checking.
+## Optional Cloudflare integration
 
----
+Read `cloudflare/README.md` and the reviewable `cloudflare/pages-project.json` payload. `cf@1.0.0-beta.10` is an **optional dependency**, omitted by the default installation and ordinary CI. Enable the CLI with `npm ci --include=optional` only when using this integration.
 
-## Execution update — 2026-10-01
+- `npm run build:cloudflare`: build/check the site, then add an explicit `404.html` for Pages.
+- `npm run cloudflare:setup`: default dry run, with no API write.
+- `npm run cloudflare:setup -- --apply`: create the Pages project with Git integration.
+- `npm run cloudflare:setup -- --status`: read the existing project.
+- `.github/workflows/cloudflare-pages.yml`: manual `workflow_dispatch` validation only; no automatic push/PR trigger, credentials, creation or deployment.
 
-The plan above is preserved verbatim from the planning session. This session subsequently switched to execution mode, and `HANDOFF.md` was saved at the user's request. The earlier statements about Plan mode and the absence of a saved handoff describe the original planning turn, not the current state.
+All Cloudflare interactions use `cf` per the user's AGENTS.md instruction; no Wrangler configuration exists. The installed cf beta's `pages deploy` command is a placeholder refusing classic Pages direct upload, so this option uses the supported `cf pages create` command and Pages native Git integration, without converting the website to a Worker.
 
-Only the handoff file has been added. Website implementation, deployment, committing, and pushing have not been performed. A local agent can read this file immediately; a cloud agent needs this file included in the remote repository or supplied in its task context. Follow the instructions and collaboration mode of the new session when continuing.
+At the 2026-10-01 integration inspection, cf authentication was valid with Pages read/write scopes and `cf pages list` returned no projects. Cloudflare GitHub App access to the repository has not been verified, and no remote Pages project or live URL is claimed. First authorize repository access in Cloudflare, create the project, then check the actual deployment URL. Native Git integration publishes automatically only after the user enables it; this is independent of the repository's manual validation workflow.
 
----
+The generic `dist/` build remains usable on other static hosting services. No Cloudflare credentials are needed for ordinary build, testing or preview, and no secrets are committed.
 
-## Implementation update — 2026-10-01
-
-The website conversion is now implemented. The three Markdown files remain the editorial sources and build into `/`, `/report/`, and `/sources/`. The implementation uses markdown-it, locally bundles Mermaid and its chunks, rewrites Markdown document links to site routes, and generates a browser search index. Responsive navigation, keyboard-accessible search, wide-table scrolling, print and dark styles, diagram source fallback, and relative URLs support both root and project-prefix hosting.
-
-Available commands are `npm ci`, `npm run build`, `npm run check`, and `npm run preview`. The check covers generated internal links and fragments, all 208 explicit source anchors (including uppercase IDs), Chinese/source-ID search fixtures, an empty-result fixture, and the verified S35A E05 description. The GitHub Actions workflow validates pull requests and deploys non-PR builds from `master` or manual dispatch.
-
-At handoff time, local build and checks pass. Browser screenshot verification could not be completed because the environment had no installed browser and the Playwright Chromium download endpoint returned HTTP 403; Playwright was removed again and is not a project dependency. GitHub Pages is not claimed live: after merging, a maintainer must confirm **Settings → Pages → Build and deployment → Source: GitHub Actions**, then verify the deployment URL shown by the workflow.
-
----
-
-## PR optimization and browser verification — 2026-10-01
-
-Continuation target: [PR #1](https://github.com/Taowyoo/Wuthering-Waves-Plot-Analysis/pull/1), branch `codex/complete-tasks-in-handoff.md`. Before editing, all local implementation files were compared with PR head `5d94383` and found identical. A local Git stash backup was retained before switching from `master` to the PR branch.
-
-Completed fixes:
-
-- Search now includes the entire visible inline text of every Markdown section, including content after the old 1,200-character cutoff. Results show excerpts around the query and report the full match count while limiting the displayed list to 30.
-- Search tolerates typing before the index finishes loading, reports HTTP failures, retries after reopening, and closes with a single Escape even when Chrome's search input would otherwise consume it.
-- Link rewriting operates on parsed links, preserving code examples and handling Unicode/encoded Markdown filenames. Headings, the contents list, and search destinations use the same parsed tokens.
-- Mobile navigation remains available with JavaScript disabled. Skip links focus the article; table and diagram scroll regions support keyboard focus. Mermaid renders at its natural size instead of shrinking labels into unreadability on mobile. Failed diagram imports automatically expose the source; dark mode and reduced motion are supported.
-- Preview binds to loopback, redirects directory URLs to trailing slashes, rejects malformed percent encodings and traversal, handles HEAD and missing files, and accepts `PORT` / `PREVIEW_BASE_PATH` for deployment-prefix testing.
-
-Verification:
-
-- Local Node.js `24.21.0`; GitHub Actions continues to use Node.js 22.
-- `npm run build` and `npm run check`: three pages, 208 explicit anchors on their respective pages, links/assets/fragments, all generated search destinations, and complete Markdown inline-text coverage.
-- `npm test`: three HTTP regression cases covering redirects, malformed requests, traversal, missing paths, HEAD and method handling.
-- `PLAYWRIGHT_CHROME_PATH='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' npm run test:browser`: nine scenarios run against both root and project-prefix servers (18 tests). Coverage includes local Mermaid chunks, Chinese/source-ID search, formerly truncated content, slow/failing index requests, result links, Escape/focus, mobile menus/tables/diagrams, no-JavaScript navigation, dark mode and reduced motion.
-- Desktop and mobile screenshots were generated and visually inspected locally. The previous handoff's missing-browser limitation is resolved in this environment. Screenshots are temporary local artifacts, not tracked source files.
-- CI now runs HTTP and browser regressions in addition to build/check and uploads failure screenshots/traces.
-
-Remaining deployment boundary: an authenticated `GET /repos/Taowyoo/Wuthering-Waves-Plot-Analysis/pages` returned HTTP 404. This does not establish whether Pages is unconfigured or inaccessible to the credential. No Pages publication is claimed. Confirm **Settings → Pages → Source: GitHub Actions**, merge the PR, and inspect the workflow deployment URL. Current pushed commits and remote check results are recorded on PR #1; do not infer publication from a successful PR build.
-
-No additional lore was collected or inferred. The research sources, their uncertainty labels and incomplete coverage remain authoritative.
-
----
-
-## Cloudflare Pages alternative — 2026-10-01
-
-The user requested a second hosting path because GitHub Pages has restrictions. Local `cf` v1.0.0-beta.10 authentication is valid and has Pages read/write scopes; `cf pages list` returned no projects. No Wrangler configuration exists, so all Cloudflare commands use `cf` per the user's AGENTS.md instruction.
-
-Important CLI limitation verified in the installed package: `cf pages deploy` is a placeholder that refuses classic Pages direct upload. This implementation therefore uses **Pages Git integration** and the supported `cf pages create` API command, with a pinned `cf` dependency. It does not migrate the website to Workers.
-
-New files: `cloudflare/pages-project.json` (reviewable Pages create payload), `cloudflare/README.md` (GitHub authorization and exact build settings), `scripts/cloudflare-pages.mjs` (dry run by default, explicit `--apply` and read-only `--status`), `scripts/prepare-cloudflare.mjs` (explicit 404 output), and a separate Cloudflare validation workflow. `npm run build:cloudflare` builds/checks the site and prepares Pages-specific output. Existing GitHub Pages publishing can be disabled with repository variable `GITHUB_PAGES_ENABLED=false`; its tests remain enabled. No credential values are committed.
-
-No remote project was created or published in this continuation. Cloudflare GitHub App access to the target repository has not been verified; follow the new guide to authorize it, create the Git-integrated project and verify the actual deployment URL. CLI request dry run and a successful PR build are not substitutes for that authorization or a live deployment.
-
-Validation for the Cloudflare addition: `npm run cloudflare:setup` successfully printed the expected Pages create request without sending it. `npm run build:cloudflare` produced three pages, 68 complete search records, all 208 anchors and `dist/404.html`; three HTTP regression tests and all 18 Chrome browser tests passed against this output. Remote CI results remain on PR #1.
+Latest provider-neutral verification: `npm ci --omit=optional` removed the cf package; the generic build/check still passed for three pages, 68 search records and all 208 anchors. Three HTTP tests and 18 browser tests passed without cf installed. The optional Cloudflare build also passed without cf; project setup reports a clear installation instruction when the optional CLI is absent. GitHub-host-specific publishing tasks and output markers have been removed. Current commit and remote CI results are available on PR #1.

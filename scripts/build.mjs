@@ -147,5 +147,4 @@ await cp(path.join(root, 'src', 'site.js'), path.join(output, 'assets', 'site.js
 await cp(path.join(root, 'node_modules', 'mermaid', 'dist', 'mermaid.esm.min.mjs'), path.join(output, 'assets', 'mermaid.esm.min.mjs'));
 await cp(path.join(root, 'node_modules', 'mermaid', 'dist', 'chunks', 'mermaid.esm.min'), path.join(output, 'assets', 'chunks', 'mermaid.esm.min'), { recursive: true });
 await writeFile(path.join(output, 'search-index.json'), `${JSON.stringify(searchRecords)}\n`);
-await writeFile(path.join(output, '.nojekyll'), '');
 console.log(`Built ${pages.length} pages and ${searchRecords.length} search records in dist/.`);

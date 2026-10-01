@@ -43,7 +43,7 @@
 
 ## 网站构建与发布
 
-本仓库同时提供由三份 Markdown 原稿生成的静态网站。需要 Node.js 22；首次使用先执行 `npm ci`，然后：
+本仓库同时提供由三份 Markdown 原稿生成的静态网站。需要 Node.js 22；首次使用先执行 `npm ci --omit=optional`，然后：
 
 ```bash
 npm run build    # 生成 dist/
@@ -56,11 +56,13 @@ npm run preview  # 在 http://127.0.0.1:4173/ 本地预览
 
 搜索支持中文子串及不区分大小写的资料编号，按完整章节检索并显示命中附近的摘要。移动端表格和关系图支持横向滚动，可用 Tab 聚焦后按方向键操作；搜索可用 `/` 打开、Escape 关闭。关闭 JavaScript 时正文与导航仍可阅读，关系图保留源代码。
 
-页面全部使用相对链接，因此既可部署在域名根目录，也可部署到 `/Wuthering-Waves-Plot-Analysis/` 项目前缀。推送到 `master` 后，GitHub Actions 会构建、检查并发布 Pages；拉取请求只运行构建与检查。仓库首次启用时，仍需由维护者在 **Settings → Pages → Build and deployment → Source** 中选择 **GitHub Actions**。
+页面全部使用相对链接，可由任意静态文件服务器在域名根目录或子路径提供。将 `dist/` 内容上传到所选托管服务即可；仓库没有默认部署平台。推送和 PR 仅运行通用构建与测试，生成 `static-site` artifact，不执行发布。
 
-## Cloudflare Pages 备选部署
+## 可选：Cloudflare Pages integration
 
-如果 GitHub Pages 的发布权限受限，可使用 [Cloudflare Pages 配置与启用指南](https://github.com/Taowyoo/Wuthering-Waves-Plot-Analysis/blob/master/cloudflare/README.md)。方案采用 Pages Git integration，构建命令为 `npm ci && npm run build:cloudflare`，输出目录为 `dist`；`npm run cloudflare:setup` 默认只预检创建请求，完成 GitHub App 授权后可加 `--apply` 创建项目。将仓库变量 `GITHUB_PAGES_ENABLED` 设为 `false` 可跳过原 GitHub Pages 发布。
+[Cloudflare Pages 配置与启用指南](https://github.com/Taowyoo/Wuthering-Waves-Plot-Analysis/blob/master/cloudflare/README.md) 提供一种可选托管方案。只有主动选择此方案后，才需安装可选 CLI（`npm ci --include=optional`）、授权 GitHub App 并创建 Pages 项目。通用构建、预览和测试不需要 Cloudflare 账户或 CLI。
+
+`npm run build:cloudflare` 准备 Pages 输出；`npm run cloudflare:setup` 默认只预检创建请求，加 `--apply` 才创建项目。Cloudflare 验证工作流仅支持手动运行，不在每次推送或 PR 中启用；项目创建后，已授权的 Pages Git integration 才会按其分支配置自动发布。其他托管服务可直接使用通用 `npm run build` 的产物。
 
 ## 本次校验
 

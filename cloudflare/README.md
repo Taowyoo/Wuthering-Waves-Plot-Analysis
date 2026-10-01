@@ -1,10 +1,10 @@
 # Cloudflare Pages 备选部署
 
-本方案使用 **Pages Git integration**。它由 Cloudflare 直接拉取 GitHub 仓库、构建并发布，不依赖 GitHub Pages 的发布权限，也不需要把本机 OAuth 凭据放入 GitHub Secrets。
+本方案使用 **Pages Git integration**。它由 Cloudflare 直接拉取 GitHub 仓库、构建并发布，它是静态网站的一个可选托管方案，无需把本机 OAuth 凭据放入 GitHub Secrets。
 
 ## 已检查的本机 integration
 
-2026-10-01 检查时，`cf auth whoami` 显示本机已登录，token 有效并具有 Pages 读写 scope；`cf pages list` 返回空列表，尚无可复用的 Pages 项目。CLI 版本为 `1.0.0-beta.10`，已固定在项目开发依赖中。
+2026-10-01 检查时，`cf auth whoami` 显示本机已登录，token 有效并具有 Pages 读写 scope；`cf pages list` 返回空列表，尚无可复用的 Pages 项目。CLI 版本为 `1.0.0-beta.10`，已固定为可选依赖。通用网站构建不使用此 CLI。
 
 这个版本的 `cf pages deploy` 只是占位入口，运行时拒绝经典 Pages 的直接上传。本方案使用实际支持的 `cf pages create`，不使用 Wrangler，也不将网站改成 Worker。仓库中 `pages-project.json` 是 Pages API 请求体，不是 Workers 的 `cloudflare.config.ts`；单独放置是为了避免触发 Workers 自动配置。
 
@@ -14,7 +14,7 @@
 2. 如果通过控制台继续创建项目，使用下表设置并保存。或者完成 GitHub 授权后，在本地执行以下命令创建项目：
 
    ```bash
-   npm ci
+   npm ci --include=optional
    cf auth whoami
    npm run cloudflare:setup            # 默认只打印 API 请求，不创建项目
    npm run cloudflare:setup -- --apply # 创建项目并连接 GitHub，可能触发构建
@@ -31,7 +31,7 @@
 | Framework preset | None |
 | Production branch | `master` |
 | Root directory | 仓库根目录 |
-| Build command | `npm ci && npm run build:cloudflare` |
+| Build command | `npm ci --omit=optional && npm run build:cloudflare` |
 | Build output directory | `dist` |
 | NODE_VERSION（production 与 preview） | `22` |
 | Preview deployment | Custom：`codex/complete-tasks-in-handoff.md` |
@@ -41,13 +41,13 @@
 
 ## 本地及 PR 验证
 
-`npm run build:cloudflare` 运行现有构建和完整链接/锚点/搜索检查，再增加根目录 `404.html`，防止 Pages 默认的 SPA fallback 把不存在的路径显示成首页。输出采用域名根路径，不使用 GitHub 项目前缀。
+`npm run build:cloudflare` 运行现有构建和完整链接/锚点/搜索检查，再增加根目录 `404.html`，防止 Pages 默认的 SPA fallback 把不存在的路径显示成首页。输出采用域名根路径。
 
-独立的 `Validate Cloudflare Pages` 工作流验证构建与创建请求 dry run，并上传 `cloudflare-pages-site` artifact；不读取 Cloudflare 凭据，不创建或发布远端项目。API dry run 只能检查请求组装，不能证明 GitHub App 授权或远端建站成功。现有网站的 HTTP 与浏览器回归继续由原工作流执行。
+独立的 `Validate Cloudflare Pages` 工作流只在 Actions 页面手动运行（workflow_dispatch），验证构建与创建请求 dry run，并上传 `cloudflare-pages-site` artifact；不读取 Cloudflare 凭据，不创建或发布远端项目。API dry run 只能检查请求组装，不能证明 GitHub App 授权或远端建站成功。通用网站的 HTTP 与浏览器回归由 `Validate static site` 工作流执行。
 
-## 关闭 GitHub Pages 发布
+## 保持托管平台可选
 
-若只需要 Cloudflare，在 GitHub **Settings → Secrets and variables → Actions → Variables** 添加 `GITHUB_PAGES_ENABLED=false`。原工作流仍验证 PR，但跳过 GitHub Pages 配置、artifact 和部署。Cloudflare Git integration 的发布不受此变量影响。
+默认安装命令为 `npm ci --omit=optional`，默认构建为 `npm run build`。没有 Cloudflare 凭据时照常构建、测试、预览，并可把 `dist/` 部署到其他静态托管服务。Cloudflare 项目配置、CLI 和手动工作流只服务于主动选择此方案的维护者。完成 Git integration 项目创建后，其自动发布策略独立于仓库 CI；如需停止发布，在该 Pages 项目关闭自动部署。
 
 ## 当前边界
 

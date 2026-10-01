@@ -1,9 +1,6 @@
 name: Validate Cloudflare Pages
 
 on:
-  push:
-    branches: [master]
-  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -20,7 +17,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - run: npm ci --include=optional
       - run: npm run build:cloudflare
       # Inspect the Pages create payload without authentication or writes.
       # Native Pages Git integration performs deployment after GitHub authorization.
