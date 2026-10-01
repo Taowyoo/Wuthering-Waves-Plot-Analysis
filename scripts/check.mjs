@@ -1,5 +1,6 @@
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
+import MarkdownIt from 'markdown-it';
 
 const root = path.resolve(import.meta.dirname, '..');
 const dist = path.join(root, 'dist');
@@ -23,7 +24,7 @@ for (const [page, html] of htmlByPath) {
   for (const id of new Set(ids)) {
     if (ids.filter((candidate) => candidate === id).length > 1) failures.push(`${path.relative(root, page)}: duplicate id #${id}`);
   }
-  for (const match of html.matchAll(/href="([^"]+)"/g)) {
+  for (const match of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
     const href = match[1];
     if (/^(?:https?:|mailto:)/.test(href)) continue;
     const [pathname, fragment] = href.split('#');
@@ -38,15 +39,36 @@ for (const [page, html] of htmlByPath) {
 }
 
 const sourceAnchors = [];
-for (const file of ['README.md', '玄方剧情考据报告.md', '资料索引.md']) {
+const sourcePages = [['README.md', 'index.html'], ['玄方剧情考据报告.md', 'report/index.html'], ['资料索引.md', 'sources/index.html']];
+for (const [file, target] of sourcePages) {
   const markdown = await readFile(path.join(root, file), 'utf8');
-  sourceAnchors.push(...[...markdown.matchAll(/<a id="([^"]+)"><\/a>/g)].map((match) => match[1]));
+  const anchors = [...markdown.matchAll(/<a id="([^"]+)"><\/a>/g)].map((match) => match[1]);
+  sourceAnchors.push(...anchors);
+  for (const anchor of anchors) if (!htmlByPath.get(path.join(dist, target))?.includes(`id="${anchor}"`)) failures.push(`${file}: explicit anchor was not preserved: ${anchor}`);
 }
 const generated = htmlByPath.get(path.join(dist, 'sources', 'index.html'));
-for (const anchor of sourceAnchors) if (!generated.includes(`id="${anchor}"`)) failures.push(`explicit source anchor was not preserved: ${anchor}`);
 if (sourceAnchors.length !== 208) failures.push(`expected 208 explicit anchors, found ${sourceAnchors.length}`);
 
 const search = JSON.parse(await readFile(path.join(dist, 'search-index.json'), 'utf8'));
+// Every indexed destination must identify a real section, and every visible
+// Markdown inline block must remain searchable, including the ends of tables.
+for (const record of search) {
+  const [route, id] = record.url.split('#');
+  const html = htmlByPath.get(path.join(dist, route, 'index.html'));
+  if (!html || (id && !html.includes(`id="${id}"`))) failures.push(`search result has an invalid destination: ${record.url}`);
+}
+const markdownParser = new MarkdownIt({ html: true });
+const plainText = (value) => value.replace(/<[^>]*>/g, '').replace(/&(?:nbsp|amp|lt|gt|quot);/g, ' ').replace(/\s+/g, ' ').trim();
+for (const [file, target] of sourcePages) {
+  const route = path.dirname(target) === '.' ? '' : `${path.dirname(target)}/`;
+  const records = search.filter((record) => record.url.split('#')[0] === route);
+  const markdown = await readFile(path.join(root, file), 'utf8');
+  for (const token of markdownParser.parse(markdown, {})) {
+    if (token.type !== 'inline') continue;
+    const text = plainText(markdownParser.renderer.renderInline(token.children ?? [], markdownParser.options, {}));
+    if (text && !records.some((record) => record.text.includes(text))) failures.push(`${file}: search omitted text: ${text.slice(0, 80)}`);
+  }
+}
 for (const query of ['木禺', 'S35A', '梁鸢']) if (!search.some((record) => `${record.title} ${record.text}`.includes(query))) failures.push(`search index has no result for ${query}`);
 if (search.some((record) => `${record.title} ${record.text}`.includes('一个肯定不存在的检索词'))) failures.push('empty-result search fixture unexpectedly matched');
 if (!generated.includes('id="S35A"') || !generated.includes('木禺假扮天工、引导实验，秧秧成为重要目标')) failures.push('verified S35A E05 description is missing');
@@ -55,5 +77,5 @@ if (failures.length) {
   console.error(failures.join('\n'));
   process.exitCode = 1;
 } else {
-  console.log(`Checked ${pages.length} pages, ${sourceAnchors.length} explicit anchors, internal links, fragments, and search fixtures.`);
+  console.log(`Checked ${pages.length} pages, ${sourceAnchors.length} explicit anchors, links/assets/fragments, ${search.length} search destinations and full inline-text coverage.`);
 }

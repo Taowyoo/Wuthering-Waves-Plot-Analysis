@@ -47,14 +47,19 @@
 
 ```bash
 npm run build    # 生成 dist/
-npm run check    # 检查站内链接、208 个显式锚点和搜索样例
-npm run preview  # 在 http://localhost:4173/ 本地预览
+npm run check    # 检查链接/资源、208 个显式锚点、全文检索覆盖及结果定位
+npm test         # 预览服务器的 HTTP 回归测试
+npm run preview  # 在 http://127.0.0.1:4173/ 本地预览
 ```
+
+浏览器回归测试首次运行前执行 `npx playwright install chromium`，随后运行 `npm run test:browser`。测试会自动启动两个本地服务器，分别验证根路径和 `/Wuthering-Waves-Plot-Analysis/` 前缀。已有 Chrome 的环境可设置 `PLAYWRIGHT_CHROME_PATH` 为 Chrome 可执行文件的完整路径，省去 Chromium 下载。CI 使用 Node.js 22，自动安装 Chromium 并运行相同测试，失败时上传截图和 trace。
+
+搜索支持中文子串及不区分大小写的资料编号，按完整章节检索并显示命中附近的摘要。移动端表格和关系图支持横向滚动，可用 Tab 聚焦后按方向键操作；搜索可用 `/` 打开、Escape 关闭。关闭 JavaScript 时正文与导航仍可阅读，关系图保留源代码。
 
 页面全部使用相对链接，因此既可部署在域名根目录，也可部署到 `/Wuthering-Waves-Plot-Analysis/` 项目前缀。推送到 `master` 后，GitHub Actions 会构建、检查并发布 Pages；拉取请求只运行构建与检查。仓库首次启用时，仍需由维护者在 **Settings → Pages → Build and deployment → Source** 中选择 **GitHub Actions**。
 
 ## 本次校验
 
-三个 Markdown 文件的本地文件链接与索引锚点均已检查；208 个锚点没有重名或失效引用，表格列数一致。人物关系图已作结构与关系审读，尚未在独立 Mermaid 渲染器中验证显示。外部页面后续可能更新；本地检查不等于实机剧情核验。
+三个 Markdown 文件的本地文件链接与索引锚点均已检查；208 个锚点没有重名或失效引用，表格列数一致。网站的 Mermaid 关系图已在 Chrome 中验证渲染，根路径与项目前缀下的搜索、键盘操作、移动端、深色模式及无 JavaScript 阅读均有浏览器回归覆盖。外部页面后续可能更新；网站测试不等于实机剧情核验。
 
 奇谭公开录像已经定位，但本次播放器显示媒体无法播放；另一任务合集有试看限制，未取得可回放的全文证据。所有录像时间戳仍标“未核验”。

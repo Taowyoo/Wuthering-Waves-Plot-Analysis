@@ -25,29 +25,34 @@ const defaultFence = md.renderer.rules.fence;
 md.renderer.rules.fence = (tokens, index, options, env, self) => {
   const token = tokens[index];
   if (token.info.trim() === 'mermaid') {
-    return `<div class="diagram"><pre class="mermaid">${escapeHtml(token.content)}</pre><details><summary>查看关系图源代码</summary><pre><code>${escapeHtml(token.content)}</code></pre></details></div>`;
+    return `<div class="diagram"><div class="diagram-viewport" tabindex="0" role="region" aria-label="人物关系图，可横向滚动"><pre class="mermaid">${escapeHtml(token.content)}</pre></div><details><summary>查看关系图源代码</summary><pre><code>${escapeHtml(token.content)}</code></pre></details></div>`;
   }
   return defaultFence(tokens, index, options, env, self);
 };
-md.renderer.rules.heading_open = (tokens, index) => {
-  const next = tokens[index + 1];
-  const id = slugify(next?.content ?? 'section');
-  tokens[index].attrSet('id', id);
-  return `<${tokens[index].tag} id="${id}">`;
-};
+md.renderer.rules.table_open = () => '<div class="table-scroll" tabindex="0" role="region" aria-label="数据表格，可横向滚动"><table>\n';
+md.renderer.rules.table_close = () => '</table></div>\n';
 
 function relativeRoot(route) {
   return route ? '../' : './';
 }
 
-function rewriteLinks(markdown, route) {
+function rewriteLinks(tokens, route) {
   const prefix = relativeRoot(route);
   const targets = new Map([
     ['README.md', prefix],
     ['玄方剧情考据报告.md', `${prefix}report/`],
     ['资料索引.md', `${prefix}sources/`]
   ]);
-  return markdown.replace(/\]\((README\.md|玄方剧情考据报告\.md|资料索引\.md)(#[^)]+)?\)/g, (_, file, hash = '') => `](${targets.get(file)}${hash})`);
+  for (const token of tokens) {
+    if (token.type === 'link_open') {
+      const href = token.attrGet('href') ?? '';
+      const hashIndex = href.indexOf('#');
+      const file = hashIndex < 0 ? href : href.slice(0, hashIndex);
+      const hash = hashIndex < 0 ? '' : href.slice(hashIndex);
+      if (targets.has(decodeURIComponent(file))) token.attrSet('href', `${targets.get(decodeURIComponent(file))}${hash}`);
+    }
+    if (token.children) rewriteLinks(token.children, route);
+  }
 }
 
 function renderToc(headings) {
@@ -83,7 +88,7 @@ function pageTemplate({ title, content, route, toc, description }) {
   <div class="reading-progress" aria-hidden="true"><span></span></div>
   <div class="page-shell">
     ${toc ? `<aside class="toc"><p>本页目录</p><ol>${toc}</ol></aside>` : ''}
-    <main id="main" class="article">${content}</main>
+    <main id="main" class="article" tabindex="-1">${content}</main>
   </div>
   <footer><p>非官方剧情研究资料库 · 内容以 Markdown 原稿为准</p><p><a href="https://github.com/Taowyoo/Wuthering-Waves-Plot-Analysis">在 GitHub 查看原始资料</a></p></footer>
   <dialog class="search-dialog" aria-labelledby="search-title">
@@ -104,29 +109,33 @@ const searchRecords = [];
 
 for (const page of pages) {
   slugCounts.clear();
-  const markdown = rewriteLinks(await readFile(path.join(root, page.source), 'utf8'), page.route);
+  const markdown = await readFile(path.join(root, page.source), 'utf8');
   const tokens = md.parse(markdown, {});
+  rewriteLinks(tokens, page.route);
   const headings = [];
   let currentSection = page.label;
+  let currentId = '';
   let sectionText = [];
   const flushSection = () => {
     const text = stripHtml(sectionText.join(' '));
-    if (text) searchRecords.push({ title: currentSection, page: page.label, url: `${page.route ? `${page.route}/` : ''}${headings.at(-1)?.id ? `#${headings.at(-1).id}` : ''}`, text: text.slice(0, 1200) });
+    if (text) searchRecords.push({ title: currentSection, page: page.label, url: `${page.route ? `${page.route}/` : ''}${currentId ? `#${currentId}` : ''}`, text });
     sectionText = [];
   };
   for (let index = 0; index < tokens.length; index += 1) {
     const token = tokens[index];
     if (token.type === 'heading_open') {
-      if (token.tag === 'h2' || token.tag === 'h3') flushSection();
+      flushSection();
       const inline = tokens[index + 1];
-      const id = slugify(inline?.content ?? 'section');
-      headings.push({ level: Number(token.tag.slice(1)), id, text: inline?.content ?? '' });
-      if (token.tag === 'h2' || token.tag === 'h3') currentSection = inline?.content ?? page.label;
-    } else if (token.type === 'inline') sectionText.push(token.content);
+      const text = stripHtml(md.renderer.renderInline(inline?.children ?? [], md.options, {}));
+      const id = slugify(text);
+      token.attrSet('id', id);
+      headings.push({ level: Number(token.tag.slice(1)), id, text });
+      currentSection = text || page.label;
+      currentId = id;
+    } else if (token.type === 'inline') sectionText.push(md.renderer.renderInline(token.children ?? [], md.options, {}));
   }
   flushSection();
-  slugCounts.clear();
-  const content = md.render(markdown);
+  const content = md.renderer.render(tokens, md.options, {});
   const title = headings.find(({ level }) => level === 1)?.text ?? page.label;
   const target = path.join(output, page.route);
   await mkdir(target, { recursive: true });

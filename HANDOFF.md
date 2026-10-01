@@ -72,3 +72,30 @@ The website conversion is now implemented. The three Markdown files remain the e
 Available commands are `npm ci`, `npm run build`, `npm run check`, and `npm run preview`. The check covers generated internal links and fragments, all 208 explicit source anchors (including uppercase IDs), Chinese/source-ID search fixtures, an empty-result fixture, and the verified S35A E05 description. The GitHub Actions workflow validates pull requests and deploys non-PR builds from `master` or manual dispatch.
 
 At handoff time, local build and checks pass. Browser screenshot verification could not be completed because the environment had no installed browser and the Playwright Chromium download endpoint returned HTTP 403; Playwright was removed again and is not a project dependency. GitHub Pages is not claimed live: after merging, a maintainer must confirm **Settings → Pages → Build and deployment → Source: GitHub Actions**, then verify the deployment URL shown by the workflow.
+
+---
+
+## PR optimization and browser verification — 2026-10-01
+
+Continuation target: [PR #1](https://github.com/Taowyoo/Wuthering-Waves-Plot-Analysis/pull/1), branch `codex/complete-tasks-in-handoff.md`. Before editing, all local implementation files were compared with PR head `5d94383` and found identical. A local Git stash backup was retained before switching from `master` to the PR branch.
+
+Completed fixes:
+
+- Search now includes the entire visible inline text of every Markdown section, including content after the old 1,200-character cutoff. Results show excerpts around the query and report the full match count while limiting the displayed list to 30.
+- Search tolerates typing before the index finishes loading, reports HTTP failures, retries after reopening, and closes with a single Escape even when Chrome's search input would otherwise consume it.
+- Link rewriting operates on parsed links, preserving code examples and handling Unicode/encoded Markdown filenames. Headings, the contents list, and search destinations use the same parsed tokens.
+- Mobile navigation remains available with JavaScript disabled. Skip links focus the article; table and diagram scroll regions support keyboard focus. Mermaid renders at its natural size instead of shrinking labels into unreadability on mobile. Failed diagram imports automatically expose the source; dark mode and reduced motion are supported.
+- Preview binds to loopback, redirects directory URLs to trailing slashes, rejects malformed percent encodings and traversal, handles HEAD and missing files, and accepts `PORT` / `PREVIEW_BASE_PATH` for deployment-prefix testing.
+
+Verification:
+
+- Local Node.js `24.21.0`; GitHub Actions continues to use Node.js 22.
+- `npm run build` and `npm run check`: three pages, 208 explicit anchors on their respective pages, links/assets/fragments, all generated search destinations, and complete Markdown inline-text coverage.
+- `npm test`: three HTTP regression cases covering redirects, malformed requests, traversal, missing paths, HEAD and method handling.
+- `PLAYWRIGHT_CHROME_PATH='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' npm run test:browser`: nine scenarios run against both root and project-prefix servers (18 tests). Coverage includes local Mermaid chunks, Chinese/source-ID search, formerly truncated content, slow/failing index requests, result links, Escape/focus, mobile menus/tables/diagrams, no-JavaScript navigation, dark mode and reduced motion.
+- Desktop and mobile screenshots were generated and visually inspected locally. The previous handoff's missing-browser limitation is resolved in this environment. Screenshots are temporary local artifacts, not tracked source files.
+- CI now runs HTTP and browser regressions in addition to build/check and uploads failure screenshots/traces.
+
+Remaining deployment boundary: an authenticated `GET /repos/Taowyoo/Wuthering-Waves-Plot-Analysis/pages` returned HTTP 404. This does not establish whether Pages is unconfigured or inaccessible to the credential. No Pages publication is claimed. Confirm **Settings → Pages → Source: GitHub Actions**, merge the PR, and inspect the workflow deployment URL. Current pushed commits and remote check results are recorded on PR #1; do not infer publication from a successful PR build.
+
+No additional lore was collected or inferred. The research sources, their uncertainty labels and incomplete coverage remain authoritative.
