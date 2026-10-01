@@ -4,3 +4,6 @@ dist/
 npm-debug.log*
 test-results/
 playwright-report/
+.cloudflare/
+.env
+.env.*

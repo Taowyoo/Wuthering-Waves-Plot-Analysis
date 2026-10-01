@@ -99,3 +99,17 @@ Verification:
 Remaining deployment boundary: an authenticated `GET /repos/Taowyoo/Wuthering-Waves-Plot-Analysis/pages` returned HTTP 404. This does not establish whether Pages is unconfigured or inaccessible to the credential. No Pages publication is claimed. Confirm **Settings → Pages → Source: GitHub Actions**, merge the PR, and inspect the workflow deployment URL. Current pushed commits and remote check results are recorded on PR #1; do not infer publication from a successful PR build.
 
 No additional lore was collected or inferred. The research sources, their uncertainty labels and incomplete coverage remain authoritative.
+
+---
+
+## Cloudflare Pages alternative — 2026-10-01
+
+The user requested a second hosting path because GitHub Pages has restrictions. Local `cf` v1.0.0-beta.10 authentication is valid and has Pages read/write scopes; `cf pages list` returned no projects. No Wrangler configuration exists, so all Cloudflare commands use `cf` per the user's AGENTS.md instruction.
+
+Important CLI limitation verified in the installed package: `cf pages deploy` is a placeholder that refuses classic Pages direct upload. This implementation therefore uses **Pages Git integration** and the supported `cf pages create` API command, with a pinned `cf` dependency. It does not migrate the website to Workers.
+
+New files: `cloudflare/pages-project.json` (reviewable Pages create payload), `cloudflare/README.md` (GitHub authorization and exact build settings), `scripts/cloudflare-pages.mjs` (dry run by default, explicit `--apply` and read-only `--status`), `scripts/prepare-cloudflare.mjs` (explicit 404 output), and a separate Cloudflare validation workflow. `npm run build:cloudflare` builds/checks the site and prepares Pages-specific output. Existing GitHub Pages publishing can be disabled with repository variable `GITHUB_PAGES_ENABLED=false`; its tests remain enabled. No credential values are committed.
+
+No remote project was created or published in this continuation. Cloudflare GitHub App access to the target repository has not been verified; follow the new guide to authorize it, create the Git-integrated project and verify the actual deployment URL. CLI request dry run and a successful PR build are not substitutes for that authorization or a live deployment.
+
+Validation for the Cloudflare addition: `npm run cloudflare:setup` successfully printed the expected Pages create request without sending it. `npm run build:cloudflare` produced three pages, 68 complete search records, all 208 anchors and `dist/404.html`; three HTTP regression tests and all 18 Chrome browser tests passed against this output. Remote CI results remain on PR #1.

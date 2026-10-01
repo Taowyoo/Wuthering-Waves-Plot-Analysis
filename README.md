@@ -58,6 +58,10 @@ npm run preview  # 在 http://127.0.0.1:4173/ 本地预览
 
 页面全部使用相对链接，因此既可部署在域名根目录，也可部署到 `/Wuthering-Waves-Plot-Analysis/` 项目前缀。推送到 `master` 后，GitHub Actions 会构建、检查并发布 Pages；拉取请求只运行构建与检查。仓库首次启用时，仍需由维护者在 **Settings → Pages → Build and deployment → Source** 中选择 **GitHub Actions**。
 
+## Cloudflare Pages 备选部署
+
+如果 GitHub Pages 的发布权限受限，可使用 [Cloudflare Pages 配置与启用指南](https://github.com/Taowyoo/Wuthering-Waves-Plot-Analysis/blob/master/cloudflare/README.md)。方案采用 Pages Git integration，构建命令为 `npm ci && npm run build:cloudflare`，输出目录为 `dist`；`npm run cloudflare:setup` 默认只预检创建请求，完成 GitHub App 授权后可加 `--apply` 创建项目。将仓库变量 `GITHUB_PAGES_ENABLED` 设为 `false` 可跳过原 GitHub Pages 发布。
+
 ## 本次校验
 
 三个 Markdown 文件的本地文件链接与索引锚点均已检查；208 个锚点没有重名或失效引用，表格列数一致。网站的 Mermaid 关系图已在 Chrome 中验证渲染，根路径与项目前缀下的搜索、键盘操作、移动端、深色模式及无 JavaScript 阅读均有浏览器回归覆盖。外部页面后续可能更新；网站测试不等于实机剧情核验。

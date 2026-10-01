@@ -8,13 +8,16 @@
     "check": "node scripts/check.mjs",
     "preview": "node scripts/preview.mjs",
     "test": "node --test tests/*.test.mjs",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "build:cloudflare": "npm run build && npm run check && node scripts/prepare-cloudflare.mjs",
+    "cloudflare:setup": "node scripts/cloudflare-pages.mjs"
   },
   "dependencies": {
     "markdown-it": "^14.1.0",
     "mermaid": "^11.12.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.63.0"
+    "@playwright/test": "^1.63.0",
+    "cf": "1.0.0-beta.10"
   }
 }

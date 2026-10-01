@@ -34,15 +34,15 @@ jobs:
           name: browser-test-results
           path: test-results/
           if-no-files-found: ignore
-      - if: github.event_name != 'pull_request'
+      - if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && vars.GITHUB_PAGES_ENABLED != 'false'
         uses: actions/configure-pages@v5
-      - if: github.event_name != 'pull_request'
+      - if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && vars.GITHUB_PAGES_ENABLED != 'false'
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/master' && vars.GITHUB_PAGES_ENABLED != 'false'
     needs: build
     runs-on: ubuntu-latest
     permissions:

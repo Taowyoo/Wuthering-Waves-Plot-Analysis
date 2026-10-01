@@ -1,0 +1,32 @@
+name: Validate Cloudflare Pages
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cloudflare-pages:
+    runs-on: ubuntu-latest
+    env:
+      CF_SEND_TELEMETRY: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build:cloudflare
+      # Inspect the Pages create payload without authentication or writes.
+      # Native Pages Git integration performs deployment after GitHub authorization.
+      - run: npm run cloudflare:setup
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cloudflare-pages-site
+          path: dist
+          include-hidden-files: true
