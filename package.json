@@ -1,0 +1,15 @@
+{
+  "name": "wuthering-waves-plot-analysis",
+  "version": "1.0.0",
+  "private": true,
+  "description": "鸣潮玄方篇剧情考据静态网站",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/check.mjs",
+    "preview": "node scripts/preview.mjs"
+  },
+  "dependencies": {
+    "markdown-it": "^14.1.0",
+    "mermaid": "^11.12.0"
+  }
+}

@@ -62,3 +62,13 @@ Success means the three documents are independently readable as HTML, evidence l
 The plan above is preserved verbatim from the planning session. This session subsequently switched to execution mode, and `HANDOFF.md` was saved at the user's request. The earlier statements about Plan mode and the absence of a saved handoff describe the original planning turn, not the current state.
 
 Only the handoff file has been added. Website implementation, deployment, committing, and pushing have not been performed. A local agent can read this file immediately; a cloud agent needs this file included in the remote repository or supplied in its task context. Follow the instructions and collaboration mode of the new session when continuing.
+
+---
+
+## Implementation update — 2026-10-01
+
+The website conversion is now implemented. The three Markdown files remain the editorial sources and build into `/`, `/report/`, and `/sources/`. The implementation uses markdown-it, locally bundles Mermaid and its chunks, rewrites Markdown document links to site routes, and generates a browser search index. Responsive navigation, keyboard-accessible search, wide-table scrolling, print and dark styles, diagram source fallback, and relative URLs support both root and project-prefix hosting.
+
+Available commands are `npm ci`, `npm run build`, `npm run check`, and `npm run preview`. The check covers generated internal links and fragments, all 208 explicit source anchors (including uppercase IDs), Chinese/source-ID search fixtures, an empty-result fixture, and the verified S35A E05 description. The GitHub Actions workflow validates pull requests and deploys non-PR builds from `master` or manual dispatch.
+
+At handoff time, local build and checks pass. Browser screenshot verification could not be completed because the environment had no installed browser and the Playwright Chromium download endpoint returned HTTP 403; Playwright was removed again and is not a project dependency. GitHub Pages is not claimed live: after merging, a maintainer must confirm **Settings → Pages → Build and deployment → Source: GitHub Actions**, then verify the deployment URL shown by the workflow.

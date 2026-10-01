@@ -41,6 +41,18 @@
 - 本次不使用玩家评论、泄露资料或纯攻略推测作为剧情事实。
 - 后续优先补奇谭、危行和锁暝故事，再补活动、NPC、场景文献、声骸与对白分支。更新须同时修订报告、索引和覆盖表。
 
+## 网站构建与发布
+
+本仓库同时提供由三份 Markdown 原稿生成的静态网站。需要 Node.js 22；首次使用先执行 `npm ci`，然后：
+
+```bash
+npm run build    # 生成 dist/
+npm run check    # 检查站内链接、208 个显式锚点和搜索样例
+npm run preview  # 在 http://localhost:4173/ 本地预览
+```
+
+页面全部使用相对链接，因此既可部署在域名根目录，也可部署到 `/Wuthering-Waves-Plot-Analysis/` 项目前缀。推送到 `master` 后，GitHub Actions 会构建、检查并发布 Pages；拉取请求只运行构建与检查。仓库首次启用时，仍需由维护者在 **Settings → Pages → Build and deployment → Source** 中选择 **GitHub Actions**。
+
 ## 本次校验
 
 三个 Markdown 文件的本地文件链接与索引锚点均已检查；208 个锚点没有重名或失效引用，表格列数一致。人物关系图已作结构与关系审读，尚未在独立 Mermaid 渲染器中验证显示。外部页面后续可能更新；本地检查不等于实机剧情核验。
