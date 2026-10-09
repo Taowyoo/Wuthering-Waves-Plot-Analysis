@@ -1,0 +1,152 @@
+{
+  "source": "独家内幕｜库洛鸣潮文案负责人：像滚雪球，把创意越滚越大.pdf",
+  "sha256": "4c4c69d298e5920307adcb6ae9a0b0d280b44f02e61a6e90ef94f4f04f3d81d3",
+  "source_url": "https://mp.weixin.qq.com/s/iXEYhe_ZjQYSd0p6J_TT-Q",
+  "extracted_on": "2026-10-07",
+  "pages": [
+    {
+      "page": 1,
+      "text_chars": 397,
+      "image_objects": 2,
+      "render": "pages/page-01.png"
+    },
+    {
+      "page": 2,
+      "text_chars": 165,
+      "image_objects": 2,
+      "render": "pages/page-02.png"
+    },
+    {
+      "page": 3,
+      "text_chars": 362,
+      "image_objects": 0,
+      "render": "pages/page-03.png"
+    },
+    {
+      "page": 4,
+      "text_chars": 443,
+      "image_objects": 0,
+      "render": "pages/page-04.png"
+    },
+    {
+      "page": 5,
+      "text_chars": 268,
+      "image_objects": 0,
+      "render": "pages/page-05.png"
+    },
+    {
+      "page": 6,
+      "text_chars": 347,
+      "image_objects": 0,
+      "render": "pages/page-06.png"
+    },
+    {
+      "page": 7,
+      "text_chars": 304,
+      "image_objects": 0,
+      "render": "pages/page-07.png"
+    },
+    {
+      "page": 8,
+      "text_chars": 327,
+      "image_objects": 0,
+      "render": "pages/page-08.png"
+    },
+    {
+      "page": 9,
+      "text_chars": 284,
+      "image_objects": 0,
+      "render": "pages/page-09.png"
+    },
+    {
+      "page": 10,
+      "text_chars": 290,
+      "image_objects": 0,
+      "render": "pages/page-10.png"
+    },
+    {
+      "page": 11,
+      "text_chars": 433,
+      "image_objects": 0,
+      "render": "pages/page-11.png"
+    },
+    {
+      "page": 12,
+      "text_chars": 383,
+      "image_objects": 0,
+      "render": "pages/page-12.png"
+    },
+    {
+      "page": 13,
+      "text_chars": 252,
+      "image_objects": 0,
+      "render": "pages/page-13.png"
+    },
+    {
+      "page": 14,
+      "text_chars": 506,
+      "image_objects": 0,
+      "render": "pages/page-14.png"
+    },
+    {
+      "page": 15,
+      "text_chars": 281,
+      "image_objects": 0,
+      "render": "pages/page-15.png"
+    },
+    {
+      "page": 16,
+      "text_chars": 371,
+      "image_objects": 0,
+      "render": "pages/page-16.png"
+    },
+    {
+      "page": 17,
+      "text_chars": 151,
+      "image_objects": 1,
+      "render": "pages/page-17.png"
+    },
+    {
+      "page": 18,
+      "text_chars": 324,
+      "image_objects": 0,
+      "render": "pages/page-18.png"
+    },
+    {
+      "page": 19,
+      "text_chars": 0,
+      "image_objects": 0,
+      "render": "pages/page-19.png"
+    }
+  ],
+  "images": [
+    {
+      "path": "images/image-01.png",
+      "sha256": "adab64ff54afd2612de1d45a249bc3bfbbd4a9925e04b8fcbc60fc3ca70e78d9",
+      "first_page": 1
+    },
+    {
+      "path": "images/image-02.png",
+      "sha256": "da40a243e9293b7759d8722c62099be130cee21b23f0c7fa8676cd78063f0f7e",
+      "first_page": 1
+    },
+    {
+      "path": "images/image-03.png",
+      "sha256": "f2daed21668a239cfbaaa7df673578f14a81e165bf3444543b68baa44f1d3ba7",
+      "first_page": 2
+    },
+    {
+      "path": "images/image-04.png",
+      "sha256": "4b3e99f5cfd6fae0720c5fff31a138c45a20e07285a00ce0623268d302f41562",
+      "first_page": 17
+    }
+  ],
+  "notes": [
+    "原始 PDF 保持不变。",
+    "动态图片在打印 PDF 中只有静态画面。",
+    "原网页部分配图未进入 PDF；没有从其他网页补入图片。",
+    "Markdown 保留分页，正文之外的推荐与账号信息也保留。"
+  ],
+  "question_count": 22,
+  "answer_count": 22
+}
