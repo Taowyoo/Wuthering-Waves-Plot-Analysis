@@ -1,0 +1,4 @@
+[submodule "WutheringWaves_Data"]
+	path = WutheringWaves_Data
+	url = https://github.com/Arikatsu/WutheringWaves_Data.git
+	shallow = true
