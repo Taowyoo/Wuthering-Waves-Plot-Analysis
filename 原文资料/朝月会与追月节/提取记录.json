@@ -1,0 +1,45 @@
+{
+  "researchDate": "2026-10-10",
+  "versionReadme": "# WW_Data\r\n\r\n> Client region: Global</br>\r\n> Status: Release</br>\r\n> Game Version: 3.7.0</br>\r\n> Resource Version: 3.7.8</br>\r\n> Changelist: 8975829",
+  "note": "版本信息为资料仓库自述；未核对实机逐句演出，不将内部流程名视为正式任务名或已上线证明。",
+  "files": [
+    {
+      "file": "WutheringWaves_Data/Textmaps/zh-Hans/multi_text/MultiText.json",
+      "bytes": 50891461,
+      "sha256": "df4319a16ac65fa1ce9bab7eee7e93842fc4e0c7d31e8977f1367e075fb33601"
+    },
+    {
+      "file": "WutheringWaves_Data/Textmaps/zh-Hans/multi_text_1sthalf/MultiText.json",
+      "bytes": 324392,
+      "sha256": "300fb43a4937b09403fb632ade3e19520006f346a5b2fb7624ab91239d5e0253"
+    },
+    {
+      "file": "WutheringWaves_Data/Textmaps/zh-Hans/multi_text_2ndhalf/MultiText.json",
+      "bytes": 106225,
+      "sha256": "a0cac467712604a9e89e3b299bacf6713a6874131bffeffae3bfe783aa2c1859"
+    },
+    {
+      "file": "WutheringWaves_Data/BinData/speaker/speaker.json",
+      "bytes": 2873579,
+      "sha256": "267f1a3f1ef8a053104fe10fc399e34b9c5067afd4b2ab49b941dd0512bab635"
+    },
+    {
+      "file": "WutheringWaves_Data/Textmaps/zh-Hans/speaker/Speaker.json",
+      "bytes": 494127,
+      "sha256": "9be8b856953f69045321fc5edf7a0b8c3a150ddcf7559f5cae7b96118f5a9a00"
+    },
+    {
+      "file": "WutheringWaves_Data/BinData/flowState/flowstate.json",
+      "bytes": 54949038,
+      "sha256": "aba413bab7d233cbb2aaddf9a64ddd4971fc4c0262a7c3b1fe7f7f80c9e66c6a"
+    },
+    {
+      "file": "WutheringWaves_Data/README.md",
+      "bytes": 148,
+      "sha256": "f24a6f0dae961d8fce45025ee69643e5556dfd5f45ce320caf702ec1fed06909"
+    }
+  ],
+  "keywordHits": 522,
+  "selectedRecords": 340,
+  "readableRecords": 218
+}
